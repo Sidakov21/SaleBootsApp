@@ -30,6 +30,12 @@ namespace SaleBootsApp
             Instance = this; // Установка текущего пользователя при создании
         }
 
+        public static void LoginAdminForDebug(int userId, int roleId, string fullName, string roleName)
+        {
+            // Инициализация объекта Instance с данными Администратора
+            new CurrentUser(userId, roleId, fullName, roleName);
+        }
+
         public static void Logout()
         {
             Instance = null;

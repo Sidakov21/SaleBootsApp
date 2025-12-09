@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:SaleBootsApp"
       mc:Ignorable="d" 
       Title="Список товаров"
-      Background="{StaticResource MainBackground}">
+      Background="{StaticResource MainBackground}"
+      Loaded="Page_Loaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -17,16 +18,18 @@
 
         <Grid Grid.Row="0" Background="{StaticResource SecondaryBackground}" Margin="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock x:Name="UserInfoTextBlock" Grid.Column="0" 
-                       VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,5,0,5"/>
+            <Button Content="Выход" Grid.Column="0" 
+            Background="{StaticResource AccentColor}" 
+            Click="LogoutButton_Click" Width="80" Height="25" Margin="5"/>
 
-            <Button Content="Выход" Grid.Column="1" 
-                    Background="{StaticResource AccentColor}" 
-                    Click="LogoutButton_Click" Width="80" Height="25" Margin="5"/>
+            <TextBlock x:Name="UserInfoTextBlock" Grid.Column="2" 
+               VerticalAlignment="Center" FontSize="14" FontWeight="Bold" 
+               Margin="0,5,10,5"/>
         </Grid>
 
         <StackPanel Grid.Row="1" x:Name="ManagerPanel" Orientation="Horizontal" Margin="10,5,10,5">
@@ -59,7 +62,8 @@
         </StackPanel>
 
 
-        <ListView Grid.Row="2" x:Name="ProductListView" BorderThickness="0" Margin="10">
+        <ListView Grid.Row="2" x:Name="ProductListView" BorderThickness="0" Margin="10"
+                  MouseDoubleClick="ProductListView_MouseDoubleClick">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

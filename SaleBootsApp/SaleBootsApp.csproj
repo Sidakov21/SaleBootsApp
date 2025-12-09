@@ -63,6 +63,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddProducts\AddEditProductPage.xaml.cs">
+      <DependentUpon>AddEditProductPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Вспомогательные классы\BoolToVisibilityConverter.cs" />
     <Compile Include="Вспомогательные классы\BoolToWeightConverter.cs" />
     <Compile Include="Categoryes.cs">
@@ -114,6 +117,10 @@
     <Compile Include="Users.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Page Include="AddProducts\AddEditProductPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AuthPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,9 +193,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model1.Context.cs</LastGenOutput>
@@ -199,17 +203,6 @@
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
-    <Resource Include="Resources\Продукты\1.jpg" />
-    <Resource Include="Resources\Продукты\10.jpg" />
-    <Resource Include="Resources\Продукты\2.jpg" />
-    <Resource Include="Resources\Продукты\3.jpg" />
-    <Resource Include="Resources\Продукты\4.jpg" />
-    <Resource Include="Resources\Продукты\5.jpg" />
-    <Resource Include="Resources\Продукты\6.jpg" />
-    <Resource Include="Resources\Продукты\7.jpg" />
-    <Resource Include="Resources\Продукты\8.jpg" />
-    <Resource Include="Resources\Продукты\9.jpg" />
-    <Resource Include="Resources\picture.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

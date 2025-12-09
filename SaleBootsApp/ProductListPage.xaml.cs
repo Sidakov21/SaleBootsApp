@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SaleBootsApp.AddProducts;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Data.Entity;
 
 namespace SaleBootsApp
 {
@@ -30,8 +31,11 @@ namespace SaleBootsApp
             LoadUserInfo();
             SetupManagerControls();
             LoadFilterData();
-            LoadProducts();
+        }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadProducts();
         }
 
         private void LoadProducts()
@@ -52,22 +56,22 @@ namespace SaleBootsApp
                         .Select(p => new ProductViewModel
                         {
                             ProductArticle = p.Article,
-                            ProductName = p.ProductName,
-                            Description = p.Description,
+                            ProductName = p.ProductName ?? "",
+                            Description = p.Description ?? "",
                             CategoryName = p.Categoryes.CategoryName,
                             ManufacturerName = p.Manufactures.ManufacturerName,
                             SupplierName = p.Suppliers.SupplierName,
                             Discount = (decimal)p.Discount,
                             QuantityInStock = (int)p.QuantityInStock,
                             UnitsName = p.Units.UnitsName,
-                            PhotoPath = p.Photo,
+                            PhotoPath = p.Photo ?? "",
                             OriginalPrice = (decimal)p.Price,
-                            // Вычисляем конечную цену прямо в запросе
+
+
                             FinalPrice = ProductViewModel.CalculateFinalPrice((decimal)p.Price, (decimal)p.Discount)
                         })
                         .ToList();
 
-                    // Вызываем фильтрацию/сортировку, чтобы обновить ListView
                     ApplyFilterSortAndSearch();
                 }
             }
@@ -82,7 +86,7 @@ namespace SaleBootsApp
             // Отображение ФИО в правом верхнем углу
             if (CurrentUser.Instance != null)
             {
-                UserInfoTextBlock.Text = $"{CurrentUser.Instance.FullName} ({CurrentUser.Instance.RoleName})";
+                UserInfoTextBlock.Text = $"{CurrentUser.Instance.FullName}";
             }
             else
             {
@@ -110,39 +114,39 @@ namespace SaleBootsApp
             }
         }
 
-        private void LoadFilterData()
-        {
-            try
-            {
-                using (var db = new DB_SP_SaleBootsEntities())
-                {
-                    var suppliers = db.Suppliers.Select(c => c.SupplierName).ToList();
-                    suppliers.Insert(0, "Все поставщики"); // Добавляем опцию "Все"
-
-                    SupplierFilterComboBox.ItemsSource = suppliers;
-                    SupplierFilterComboBox.SelectedIndex = 0;
-                    SortComboBox.SelectedIndex = 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки данных фильтров: {ex.Message}", "Ошибка БД");
-            }
-        }
-
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             CurrentUser.Logout();
 
             if (NavigationService.CanGoBack)
             {
-                // Если AuthPage в истории, можно просто вернуться
                 NavigationService.GoBack();
             }
             else
             {
-                // Иначе создаем новую страницу авторизации
                 NavigationService.Navigate(new AuthPage());
+            }
+        }
+
+        private void LoadFilterData()
+        {
+            try
+            {
+                using (var db = new DB_SP_SaleBootsEntities())
+                {
+
+                    var suppliers = db.Suppliers.Select(c => c.SupplierName).ToList();
+                    suppliers.Insert(0, "Все поставщики");
+
+                    SupplierFilterComboBox.ItemsSource = suppliers;
+                    SupplierFilterComboBox.SelectedIndex = 0;
+
+                    SortComboBox.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных фильтров: {ex.Message}", "Ошибка БД");
             }
         }
 
@@ -159,37 +163,67 @@ namespace SaleBootsApp
                 filteredProducts = filteredProducts.Where(p => p.SupplierName == selectedSupplier);
             }
 
-            // 2. ПОИСК по Наименованию/Описанию
+            //2. ПОИСК по Наименованию/Описанию
             string searchText = SearchTextBox.Text.ToLower();
             if (!string.IsNullOrWhiteSpace(searchText))
             {
                 filteredProducts = filteredProducts.Where(p =>
-                    p.ProductName.ToLower().Contains(searchText) ||
-                    p.Description.ToLower().Contains(searchText));
+                    (p.ProductName ?? "").ToLower().Contains(searchText) ||
+                    (p.Description ?? "").ToLower().Contains(searchText));
             }
 
-            // 3. СОРТИРОВКА по Количеству на складе
+            // 3. СОРТИРОВКА
             int sortIndex = SortComboBox.SelectedIndex;
-            if (sortIndex == 1)
+
+            if (sortIndex == 1) // По возрастанию количества
             {
                 filteredProducts = filteredProducts.OrderBy(p => p.QuantityInStock);
             }
-            else if (sortIndex == 2)
+            else if (sortIndex == 2) // По убыванию количества
             {
                 filteredProducts = filteredProducts.OrderByDescending(p => p.QuantityInStock);
             }
 
-            ProductListView.ItemsSource = filteredProducts.ToList();
-        }
 
-        private void FilterSortSearch_Changed(object sender, TextChangedEventArgs e)
-        {
-            ApplyFilterSortAndSearch();
+            ProductListView.ItemsSource = filteredProducts.ToList();
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Будет реализована страница добавления/редактирования товара.", "Функционал Администратора");
+            NavigationService.Navigate(new AddEditProductPage());
+        }
+
+        private void ProductListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ProductListView.SelectedItem is ProductViewModel selectedProductViewModel)
+            {
+                try
+                {
+                    using (var db = new DB_SP_SaleBootsEntities())
+                    {
+                        // Находим полную сущность Product в БД по артикулу (Article)
+                        var productToEdit = db.Products
+                            .Include(p => p.Categoryes)
+                            .Include(p => p.Manufactures)
+                            .Include(p => p.Suppliers)
+                            .Include(p => p.Units)
+                            .FirstOrDefault(p => p.Article == selectedProductViewModel.ProductArticle);
+
+                        if (productToEdit != null)
+                        {
+                            NavigationService.Navigate(new AddEditProductPage(productToEdit));
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось найти полную информацию о товаре.", "Ошибка");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при загрузке товара для редактирования: {ex.Message}", "Ошибка БД");
+                }
+            }
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -200,7 +234,54 @@ namespace SaleBootsApp
                 return;
             }
 
-            MessageBox.Show("Будет реализована логика удаления товара из БД.", "Функционал Администратора");
+            if (ProductListView.SelectedItem is ProductViewModel productToDelete)
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    $"Вы уверены, что хотите удалить товар: {productToDelete.ProductName} (Артикул: {productToDelete.ProductArticle})?",
+                    "Подтверждение удаления",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        using (var db = new DB_SP_SaleBootsEntities())
+                        {
+                            var productEntity = db.Products
+                                .FirstOrDefault(p => p.Article == productToDelete.ProductArticle);
+
+                            if (productEntity != null)
+                            {
+                                db.Products.Remove(productEntity);
+                                db.SaveChanges();
+
+                                MessageBox.Show("Товар успешно удален.", "Успех");
+
+                                LoadProducts();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Товар не найден в базе данных.", "Ошибка удаления");
+                            }
+                        }
+                    }
+                    catch (System.Data.Entity.Infrastructure.DbUpdateException dbEx)
+                    {
+                        // Обработка ошибки, если товар связан с другими таблицами (например, в заказах)
+                        MessageBox.Show($"Невозможно удалить товар. Возможно, он используется в других записях (например, в заказах).", "Ошибка целостности данных");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Произошла ошибка при удалении товара: {ex.Message}", "Ошибка БД");
+                    }
+                }
+            }
+        }
+
+        private void FilterSortSearch_Changed(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilterSortAndSearch();
         }
 
         private void SupplierFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -209,6 +290,11 @@ namespace SaleBootsApp
         }
 
         private void SortComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilterSortAndSearch();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilterSortAndSearch();
         }

@@ -56,7 +56,7 @@ namespace SaleBootsApp
                             userEntity.Roles.RoleUser
                         );
 
-                        MessageBox.Show($"Добро пожаловать, {userEntity.FullName} ({userEntity.Roles.RoleUser})!", "Успешный вход");
+                        MessageBox.Show($"Добро пожаловать, {userEntity.FullName}!", "Успешный вход");
 
                         LoginTextBox.Text = "";
                         NavigationService.Navigate(new ProductListPage());

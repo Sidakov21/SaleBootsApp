@@ -39,11 +39,23 @@ namespace SaleBootsApp
         {
             get
             {
+                const string DefaultPath = "Resources/picture.png";
                 if (string.IsNullOrEmpty(PhotoPath))
                 {
-                    return "/Resources/picture.png";
+                    return DefaultPath;
                 }
-                // Иначе используем путь к реальному фото
+
+                // Строим полный, абсолютный путь к файлу
+                // Мы предполагаем, что файлы лежат в подпапке ProductPhotos в каталоге, откуда запущено приложение.
+                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string fullPath = System.IO.Path.Combine(appDir, "Resources", "Продукты", PhotoPath);
+
+                // Проверяем, существует ли файл по полному пути
+                if (System.IO.File.Exists(fullPath))
+                {
+                    return fullPath;
+                }
+
                 return $"/Resources/Продукты/{PhotoPath}";
             }
         }
