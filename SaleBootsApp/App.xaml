@@ -4,6 +4,19 @@
              xmlns:local="clr-namespace:SaleBootsApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="{x:Type Control}">
+            <Setter Property="FontFamily" Value="Times New Roman"/>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Times New Roman"/>
+        </Style>
+
+        <SolidColorBrush x:Key="MainBackground" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryBackground" Color="#7FFF00"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#00FA9A"/>
+        <SolidColorBrush x:Key="DiscountColor" Color="#2E8B57"/>
+
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <local:BoolToWeightConverter x:Key="BoolToWeightConverter"/>
     </Application.Resources>
 </Application>

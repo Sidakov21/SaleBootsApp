@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fea98634ec114514bab2c7729f26300e" Name="Diagram1">
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Categoryes" Width="1.5" PointX="0.75" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Manufactures" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.OrderProducts" Width="1.5" PointX="5.25" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Orders" Width="1.5" PointX="3" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.OrderStatuses" Width="1.5" PointX="0.75" PointY="13" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.PickupPoints" Width="1.5" PointX="0.75" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Products" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Roles" Width="1.5" PointX="1.5" PointY="21" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Suppliers" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Units" Width="1.5" PointX="0.75" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_SP_SaleBootsModel.Users" Width="1.5" PointX="0.75" PointY="17.625" IsExpanded="true" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Products_Categoryes" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Products_Manufactures" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_OrderProducts_Orders" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_OrderProducts_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Orders_OrderStatuses" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Orders_PickupPoints" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Orders_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Products_Suppliers" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Products_Units" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_SP_SaleBootsModel.FK_Employee_Roles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

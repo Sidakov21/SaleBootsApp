@@ -1,0 +1,165 @@
+﻿<Page x:Class="SaleBootsApp.ProductListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SaleBootsApp"
+      mc:Ignorable="d" 
+      Title="Список товаров"
+      Background="{StaticResource MainBackground}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="{StaticResource SecondaryBackground}" Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="UserInfoTextBlock" Grid.Column="0" 
+                       VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,5,0,5"/>
+
+            <Button Content="Выход" Grid.Column="1" 
+                    Background="{StaticResource AccentColor}" 
+                    Click="LogoutButton_Click" Width="80" Height="25" Margin="5"/>
+        </Grid>
+
+        <StackPanel Grid.Row="1" x:Name="ManagerPanel" Orientation="Horizontal" Margin="10,5,10,5">
+
+            <TextBlock Text="Поиск:" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <TextBox x:Name="SearchTextBox" Width="150" Height="25" Margin="0,0,15,0" TextChanged="FilterSortSearch_Changed"/>
+
+            <TextBlock Text="Поставщик:" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <ComboBox x:Name="SupplierFilterComboBox" Width="150" Height="25" Margin="0,0,15,0" SelectionChanged="SupplierFilterComboBox_SelectionChanged"/>
+
+            <TextBlock Text="Количество на складе:" VerticalAlignment="Center" Margin="0,0,5,0" />
+            <ComboBox x:Name="SortComboBox" Width="200" Height="25" SelectionChanged="SortComboBox_SelectionChanged_1">
+                <ComboBoxItem Content="По умолчанию (Без сортировки)"/>
+                <ComboBoxItem Content="По возрастанию количества"/>
+                <ComboBoxItem Content="По убыванию количества"/>
+            </ComboBox>
+
+            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" x:Name="AdminButtonsPanel">
+                <Button Content="Добавить товар" 
+                    Background="{StaticResource AccentColor}" 
+                    Click="AddButton_Click" 
+                    Margin="0,0,10,0"/>
+                <Button Content="Удалить товар" 
+                    Background="Red" 
+                    Foreground="White"
+                    Click="DeleteButton_Click" 
+                    Margin="0,0,10,0"/>
+            </StackPanel>
+
+        </StackPanel>
+
+
+        <ListView Grid.Row="2" x:Name="ProductListView" BorderThickness="0" Margin="10">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="1" BorderBrush="Gray" Width="950" Margin="0,5,0,5">
+
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="White"/>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHighDiscount}" Value="True">
+                                        <Setter Property="Background" Value="#2E8B57"/>
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding IsOutOfStock}" Value="True">
+                                        <Setter Property="Background" Value="LightBlue"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <Grid MinHeight="150">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="180"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Column="0" Source="{Binding DisplayPhotoPath}" 
+                                   Stretch="Uniform" Height="140" Width="140" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                            <StackPanel Grid.Column="1" Margin="10,5,10,5">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                    <TextBlock Text="{Binding CategoryName}"
+                                               FontWeight="Bold"
+                                               FontSize="16"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text=" | "
+                                               FontWeight="Bold"
+                                               FontSize="16"
+                                               VerticalAlignment="Center"
+                                               Margin="3,0,3,0"/>
+                                    <TextBlock Text="{Binding ProductName}"
+                                               FontWeight="Bold"
+                                               FontSize="16"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,2,0,5"/>
+                                <TextBlock Text="{Binding ManufacturerName, StringFormat=Производитель: {0}}" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding SupplierName, StringFormat=Поставщик: {0}}" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding ProductArticle, StringFormat=Артикул: {0}}" Margin="0,2,0,0"/>
+                                <TextBlock Text="{Binding UnitsName, StringFormat=Единица измерения: {0}}" Margin="0,2,0,0"/>
+
+                                <TextBlock Text="{Binding QuantityInStock, StringFormat=На складе: {0}}" 
+                                           Margin="0,5,0,0"
+                                           FontWeight="{Binding IsOutOfStock, Converter={StaticResource BoolToWeightConverter}}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0">
+
+                                <TextBlock Text="{Binding Discount, StringFormat=Скидка: {0}%}" FontWeight="Bold" Margin="0,0,0,5"/>
+
+                                <StackPanel>
+                                    <TextBlock x:Name="OriginalPriceTextBlock" 
+                                               Text="{Binding OriginalPrice, StringFormat=Цена: {0:N2} руб.}" 
+                                               Foreground="Red" 
+                                               Visibility="{Binding IsDiscounted, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock.TextDecorations>
+                                            <TextDecoration Location="Strikethrough"/>
+                                        </TextBlock.TextDecorations>
+                                    </TextBlock>
+
+                                    <TextBlock Text="{Binding FinalPrice, StringFormat=Итого: {0:N2} руб.}" 
+                                               Foreground="Black" 
+                                               FontWeight="ExtraBold" 
+                                               Margin="0,5,0,0" FontSize="16"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

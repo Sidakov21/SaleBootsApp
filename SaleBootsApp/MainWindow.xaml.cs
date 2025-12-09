@@ -23,6 +23,8 @@ namespace SaleBootsApp
         public MainWindow()
         {
             InitializeComponent();
+            // Загружаем страницу авторизации при старте приложения
+            MainFrame.Navigate(new AuthPage());
         }
     }
 }
