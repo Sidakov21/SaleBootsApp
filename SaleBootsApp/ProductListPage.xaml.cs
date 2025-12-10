@@ -304,8 +304,14 @@ namespace SaleBootsApp
 
         private void OrdersButton_Click(object sender, RoutedEventArgs e)
         {
-            // FrameName - это имя вашего Frame, куда загружаются страницы
-            NavigationService.Navigate(new OrderListPage(/* Возможно, передаем текущего пользователя */));
+            if (CurrentUser.Instance != null)
+            {
+                NavigationService.Navigate(new OrderListPage(CurrentUser.Instance.RoleId));
+            }
+            else
+            {
+                MessageBox.Show("Ошибка: Данные о роли пользователя не найдены.", "Ошибка доступа");
+            }
         }
     }
 }

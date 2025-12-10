@@ -48,12 +48,12 @@
                 <ComboBoxItem Content="По убыванию количества"/>
             </ComboBox>
 
-            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" x:Name="AdminButtonsPanel">
-                <Button Content="Заказы" 
+            <Button Content="Заказы" 
                         Click="OrdersButton_Click" 
-                        Width="120" Height="30" Margin="0,0,10,0" 
+                        Width="120" Height="30" Margin="20,0,10,0" 
                         Background="{StaticResource AccentColor}"/>
-                
+
+            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" x:Name="AdminButtonsPanel">
                 <Button Content="Добавить товар" 
                         Background="{StaticResource AccentColor}" 
                         Click="AddButton_Click" 

@@ -23,20 +23,20 @@ namespace SaleBootsApp.AddOrder
     public partial class OrderListPage : Page
     {
         private List<OrderViewModel> _orders;
-        private Users _currentUser; 
+        private int _currentUser;
 
-        public OrderListPage()
+        public OrderListPage(int roleId)
         {
             InitializeComponent();
 
-            _currentUser = new Users { RoleID = 1 };
+            _currentUser = roleId;
             SetupAccessControls();
         }
 
         private void SetupAccessControls()
         {
             // Управление доступом: только Администратор может добавлять и удалять
-            if (_currentUser.RoleID == 1)
+            if (_currentUser == 1)
             {
                 AddOrderButton.Visibility = Visibility.Visible;
                 DeleteOrderButton.Visibility = Visibility.Visible;
@@ -108,7 +108,7 @@ namespace SaleBootsApp.AddOrder
             if (OrderListView.SelectedItem is OrderViewModel selectedOrder)
             {
                 // Переход на форму редактирования (только для Администратора)
-                if (_currentUser.RoleID == 1)
+                if (_currentUser == 1)
                 {
                     try
                     {
