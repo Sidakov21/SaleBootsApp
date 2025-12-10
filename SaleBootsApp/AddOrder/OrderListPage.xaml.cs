@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Data.Entity;
 
 namespace SaleBootsApp.AddOrder
 {
@@ -63,24 +64,22 @@ namespace SaleBootsApp.AddOrder
                         .Include(o => o.OrderStatuses)
                         .Include(o => o.OrderProducts.Select(op => op.Products)) //Обращаемся к Products? чтобы взять Article
                         .ToList()
-                        .Select(o => new OrderViewModel
+                        .Select(o =>
                         {
-                            OrderID = o.OrderID,
+                            string productArticle = o.OrderProducts.FirstOrDefault()?.Products?.Article;
 
-                            // Ищем первый элемент в коллекции, безопасно обращаемся к Product, затем к Article.
-                            // Если OrderProducts пуст, используем OrderID как запасной вариант.
-                            OrderArticle = o.OrderProducts
-                                    .FirstOrDefault()
-                                    ?.Products?.Article
-                                    ?? o.OrderID.ToString(),
-
-                            StatusName = o.OrderStatuses?.OrderStatus ?? "Неизвестно",
-                            PickupPointAddress = o.PickupPoints?.Address ?? "Не указан",
-                            OrderDate = o.OrderDate ?? DateTime.UtcNow,
-                            DeliveryDate = o.DeliveryDate
-
+                            return new OrderViewModel
+                            {
+                                OrderID = o.OrderID,
+                                OrderArticle = string.IsNullOrEmpty(productArticle)
+                                                                ? $"ORD-{o.ReceiptCode}" // Форматируем ReceiptCode для новых заказов
+                                                                : productArticle,         // Используем артикул продукта для старых
+                                StatusName = o.OrderStatuses?.OrderStatus ?? "Неизвестно",
+                                PickupPointAddress = o.PickupPoints?.Address ?? "Не указан",
+                                OrderDate = o.OrderDate ?? DateTime.UtcNow,
+                                DeliveryDate = o.DeliveryDate
+                            };
                         }).OrderByDescending(o => o.OrderDate).ToList(); 
-
                     OrderListView.ItemsSource = _orders;
                 }
             }
@@ -115,13 +114,12 @@ namespace SaleBootsApp.AddOrder
                     {
                         using (var db = new DB_SP_SaleBootsEntities())
                         {
-                            var orderToEdit = db.Orders.FirstOrDefault(o => o.OrderID == selectedOrder.OrderID);
+                            var orderToEdit = db.Orders
+                                                .AsNoTracking()
+                                                .FirstOrDefault(o => o.OrderID == selectedOrder.OrderID);
 
                             if (orderToEdit != null)
                             {
-                                // !!! ВАЖНО: Отсоединяем, чтобы избежать ошибки "Multiple Change Tracker" !!!
-                                db.Entry(orderToEdit).State = EntityState.Detached;
-
                                 NavigationService.Navigate(new AddEditOrderPage(orderToEdit));
                             }
                         }
@@ -140,7 +138,52 @@ namespace SaleBootsApp.AddOrder
 
         private void DeleteOrderButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            var selectedOrderViewModel = OrderListView.SelectedItem as OrderViewModel;
+
+            if (selectedOrderViewModel == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите заказ для удаления.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить заказ №{selectedOrderViewModel.OrderArticle} (ID: {selectedOrderViewModel.OrderID})? Это действие нельзя отменить.",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    using (var db = new DB_SP_SaleBootsEntities())
+                    {
+                        var orderToRemove = db.Orders.Find(selectedOrderViewModel.OrderID);
+
+                        if (orderToRemove != null)
+                        {
+                            // 4. Проверяем связанные данные (OrderProducts)
+                            // Используем локальный db
+                            var productsToRemove = db.OrderProducts.Where(op => op.OrderID == orderToRemove.OrderID).ToList();
+                            if (productsToRemove.Any())
+                            {
+                                db.OrderProducts.RemoveRange(productsToRemove);
+                            }
+
+                            db.Orders.Remove(orderToRemove);
+                            db.SaveChanges();
+
+                            MessageBox.Show("Заказ успешно удален!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            LoadOrders();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении заказа: {ex.Message}\nПроверьте, нет ли связанных данных (например, в логах или других таблицах), которые блокируют удаление.", "Ошибка БД", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 }
