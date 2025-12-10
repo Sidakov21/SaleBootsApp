@@ -1,0 +1,53 @@
+﻿<Page x:Class="SaleBootsApp.AddOrder.AddEditOrderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SaleBootsApp.AddOrder"
+      Title="AddEditOrderPage"
+      Background="{StaticResource MainBackground}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding PageTitle}" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Width="400" HorizontalAlignment="Left">
+
+                <TextBlock Text="Артикул заказа:"/>
+                <TextBox Text="{Binding CurrentOrderArticle}" IsReadOnly="True" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Статус заказа:"/>
+                <ComboBox x:Name="StatusComboBox" 
+                          SelectedItem="{Binding CurrentOrder.OrderStatuses}" 
+                          DisplayMemberPath="OrderStatus"
+                          SelectedValuePath="OrderStatusesID"
+                          Margin="0,0,0,10"/>
+
+                <TextBlock Text="Адрес пункта выдачи:"/>
+                <ComboBox x:Name="PickupPointComboBox"
+                          SelectedItem="{Binding CurrentOrder.PickupPoints}"
+                          DisplayMemberPath="Address"
+                          SelectedValuePath="PickupPointID"
+                          Margin="0,0,0,10"/>
+
+                <TextBlock Text="Дата заказа:"/>
+                <DatePicker SelectedDate="{Binding CurrentOrder.OrderDate}" IsEnabled="False" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Дата доставки/выдачи:"/>
+                <DatePicker SelectedDate="{Binding CurrentOrder.DeliveryDate}" Margin="0,0,0,20"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Сохранить" Click="SaveButton_Click" Width="100" Height="35" Margin="0,0,10,0" Background="{StaticResource AccentColor}"/>
+            <Button Content="Отмена" Click="CancelButton_Click" Width="100" Height="35"/>
+        </StackPanel>
+    </Grid>
+</Page>

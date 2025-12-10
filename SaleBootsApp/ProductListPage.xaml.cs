@@ -1,4 +1,5 @@
-﻿using SaleBootsApp.AddProducts;
+﻿using SaleBootsApp.AddOrder;
+using SaleBootsApp.AddProducts;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -299,6 +300,12 @@ namespace SaleBootsApp
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilterSortAndSearch();
+        }
+
+        private void OrdersButton_Click(object sender, RoutedEventArgs e)
+        {
+            // FrameName - это имя вашего Frame, куда загружаются страницы
+            NavigationService.Navigate(new OrderListPage(/* Возможно, передаем текущего пользователя */));
         }
     }
 }

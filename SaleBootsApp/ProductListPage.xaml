@@ -26,6 +26,7 @@
             <Button Content="Выход" Grid.Column="0" 
             Background="{StaticResource AccentColor}" 
             Click="LogoutButton_Click" Width="80" Height="25" Margin="5"/>
+            
 
             <TextBlock x:Name="UserInfoTextBlock" Grid.Column="2" 
                VerticalAlignment="Center" FontSize="14" FontWeight="Bold" 
@@ -48,15 +49,22 @@
             </ComboBox>
 
             <StackPanel Orientation="Horizontal" Margin="20,0,0,0" x:Name="AdminButtonsPanel">
+                <Button Content="Заказы" 
+                        Click="OrdersButton_Click" 
+                        Width="120" Height="30" Margin="0,0,10,0" 
+                        Background="{StaticResource AccentColor}"/>
+                
                 <Button Content="Добавить товар" 
-                    Background="{StaticResource AccentColor}" 
-                    Click="AddButton_Click" 
-                    Margin="0,0,10,0"/>
+                        Background="{StaticResource AccentColor}" 
+                        Click="AddButton_Click" 
+                        Width="120" Height="30"
+                        Margin="0,0,10,0"/>
+                
                 <Button Content="Удалить товар" 
-                    Background="Red" 
-                    Foreground="White"
-                    Click="DeleteButton_Click" 
-                    Margin="0,0,10,0"/>
+                        Background="Red" 
+                        Foreground="White"
+                        Click="DeleteButton_Click" 
+                        Margin="0,0,10,0"/>
             </StackPanel>
 
         </StackPanel>
