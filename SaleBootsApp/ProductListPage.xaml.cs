@@ -211,6 +211,8 @@ namespace SaleBootsApp
 
                         if (productToEdit != null)
                         {
+                            db.Entry(productToEdit).State = System.Data.Entity.EntityState.Detached;
+
                             NavigationService.Navigate(new AddEditProductPage(productToEdit));
                         }
                         else

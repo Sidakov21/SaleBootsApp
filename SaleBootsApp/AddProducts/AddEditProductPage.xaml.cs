@@ -41,9 +41,14 @@ namespace SaleBootsApp.AddProducts
         {
             InitializeComponent();
 
-            _currentProduct = _db.Products.Attach(productToEdit);
+            _currentProduct = productToEdit;
+
+            _db.Products.Attach(_currentProduct);
+            _db.Entry(_currentProduct).State = System.Data.Entity.EntityState.Modified;
+
             _isNewProduct = false;
             this.DataContext = _currentProduct;
+
             PageTitle.Text = $"Редактирование товара: {_currentProduct.ProductName}";
             LoadReferenceData();
 
@@ -88,7 +93,7 @@ namespace SaleBootsApp.AddProducts
 
                     string fileName = System.IO.Path.GetFileName(openFileDialog.FileName);
                     string destinationPath = System.IO.Path.Combine(photoDir, fileName);
-
+                     
                     // 2. Копируем файл в папку приложения (с перезаписью)
                     System.IO.File.Copy(openFileDialog.FileName, destinationPath, true);
 
