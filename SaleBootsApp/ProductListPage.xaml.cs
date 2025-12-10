@@ -196,6 +196,12 @@ namespace SaleBootsApp
 
         private void ProductListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (CurrentUser.Instance == null || CurrentUser.Instance.RoleId != 1)
+            {
+                MessageBox.Show("У вас нет прав для редактирования товаров.", "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (ProductListView.SelectedItem is ProductViewModel selectedProductViewModel)
             {
                 try
